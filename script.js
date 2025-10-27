@@ -55,20 +55,21 @@ function showScreen(index) {
     content.classList.remove("fade-out");
     content.classList.add("fade-in");
   }, 800);
-
-  if (index === 0 && bgMusic.paused) {
-    bgMusic.play().catch(() => {});
-  }
 }
 
 button.addEventListener("click", () => {
+  // Asegurarse de que la música empiece con la interacción del usuario
+  if (bgMusic.paused) {
+    bgMusic.play().catch(() => {});
+  }
+  
   currentScreen++;
   if (currentScreen < screens.length) {
     showScreen(currentScreen);
   } else {
     content.classList.add("fade-out");
     setTimeout(() => {
-      title.textContent = "🎵 Gracias por dejarme acompañarte en este momento especial 💫";
+      title.textContent = "💫 Gracias por dejarme acompañarte en este momento especial 💫";
       message.textContent = "";
       button.style.display = "none";
       content.classList.remove("fade-out");
