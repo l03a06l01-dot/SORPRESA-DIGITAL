@@ -9,7 +9,6 @@
 body {
   overflow: hidden;
   height: 100vh;
-  /* Se elimina el degradado de fondo, ya que usaremos una imagen */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,28 +17,48 @@ body {
   position: relative;
 }
 
-/* Nuevo estilo para el fondo de la imagen */
-#floral-background {
+/* Base estilo para el contenedor de la imagen de fondo */
+#main-background-image {
   position: absolute;
   width: 100%;
   height: 100%;
-  /* Usa fondo3.jpg como fondo */
-  background: url('fondo3.jpg') no-repeat center center/cover;
-  z-index: -3; /* Se coloca detrás de todo */
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: -3; 
+  /* Añadimos transición para que el cambio de fondo sea suave */
+  transition: background-image 1.5s ease-in-out;
 }
 
+/* CLASES DE FONDOS ESPECÍFICOS */
+.bg-floral {
+    background-image: url('fondo3.jpg'); /* Fondo floral/minimalista */
+}
+
+.bg-space {
+    background-image: url('fondo2.jpg'); /* Fondo de espacio/planetas */
+}
+
+.bg-stars {
+    background-image: url('fondo1.jpg'); /* Fondo de estrellas */
+}
+
+/* Estilo para la capa de blur que va sobre la imagen */
 #background {
   position: absolute;
   width: 100%;
   height: 100%;
-  backdrop-filter: blur(20px);
+  /* Reducido el blur inicial de 20px a 10px para mejor visibilidad del fondo */
+  backdrop-filter: blur(10px); 
   animation: blurShift 10s infinite alternate ease-in-out;
   z-index: -2;
 }
 
 @keyframes blurShift {
-  0% { backdrop-filter: blur(15px) brightness(1); }
-  100% { backdrop-filter: blur(25px) brightness(1.3); }
+  /* Reducido el blur mínimo de 15px a 5px y el brillo mínimo de 1 a 0.9 */
+  0% { backdrop-filter: blur(5px) brightness(0.9); } 
+  /* Reducido el blur máximo de 25px a 15px y el brillo máximo de 1.3 a 1.1 */
+  100% { backdrop-filter: blur(15px) brightness(1.1); } 
 }
 
 #particles {
@@ -91,7 +110,10 @@ h1 {
 p {
   font-size: 1.2rem;
   line-height: 1.7;
-  color: #333;
+  /* CAMBIOS AQUÍ: Color amarillo brillante y negrita para visibilidad */
+  color: #ffc400; /* Color amarillo brillante */
+  font-weight: 600; /* Negrita */
+  /* Fin de cambios */
   min-height: 120px;
   margin-bottom: 15px;
   white-space: pre-line;
