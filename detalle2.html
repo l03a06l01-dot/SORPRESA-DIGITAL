@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensajes en Tiempo Real 📱</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .message-box {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .message-box p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            padding: 8px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+            margin-bottom: 0;
+            color: #F0F8FF !important; /* Asegurar texto blanco */
+            font-weight: 400;
+        }
+        .message-box p:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="main-background-image" class="bg-space"></div>
+    <div id="background"></div>
+    <div id="particles"></div>
+
+    <div class="container">
+        <h1>Buzón de Mensajes ✨</h1>
+        <p>¡Aquí aparecerán los mensajes que te envíe! Actualiza la página si no ves el más reciente.</p>
+        
+        <div id="messages-container" class="message-box">
+            <p>Cargando mensajes...</p>
+        </div>
+
+        <a href="menu.html" class="back-to-menu-button">Volver al Menú Principal 🚀</a>
+    </div>
+
+    <audio id="bgMusic" src="musica.mp3" loop autoplay></audio>
+    <script>
+        const bgMusic = document.getElementById("bgMusic");
+        bgMusic.play().catch(() => {});
+
+        // ⚠️ REEMPLAZA ESTA URL con la URL de tu Google Apps Script obtenida en el Paso 1.
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzO3Pi4GwObzoy4GsNL_5dQxi19UbmdcJ-EfzJBVOZ_voNKKF3Rpl6Hjg3vu3A7rktQ/exec'; 
+        
+        const messagesContainer = document.getElementById('messages-container');
+
+        async function fetchMessages() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const messages = await response.json();
+                
+                messagesContainer.innerHTML = '';
+                
+                if (messages.length === 0) {
+                    messagesContainer.innerHTML = '<p>Aún no hay mensajes. ¡Escribe el primero en tu hoja de cálculo!</p>';
+                    return;
+                }
+
+                // Mostrar los mensajes en orden inverso (el más nuevo arriba)
+                messages.reverse().forEach(msg => {
+                    const p = document.createElement('p');
+                    p.textContent = msg;
+                    messagesContainer.appendChild(p);
+                });
+
+            } catch (error) {
+                console.error("Error al obtener los mensajes:", error);
+                messagesContainer.innerHTML = '<p style="color: red;">Error al cargar los mensajes. Asegúrate de que la API URL es correcta y está pública.</p>';
+            }
+        }
+
+        fetchMessages();
+    </script>
+</body>
+</html>

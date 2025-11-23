@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acceso al Universo Secreto 🌌</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="main-background-image" class="bg-floral"></div> 
+  <div id="background"></div>
+  <div id="particles"></div>
+
+  <div class="container login-container">
+    <h1 class="dark-text">¡Bienvenida, viajera estelar! 🌠</h1>
+    <p class="dark-text">Este universo guarda sorpresas. Para explorar, ingresa el código cósmico.</p>
+    
+    <input type="password" id="password-input" placeholder="Código Secreto">
+    <button onclick="checkPassword()">Acceder al Portal ✨</button>
+    
+    <div id="error-message"></div>
+  </div>
+
+  <script>
+    const CORRECT_PASSWORD = "1101"; // <-- ¡Cambia 'tesis' por tu contraseña deseada!
+    const MAX_ATTEMPTS = 3;
+    const LOCKOUT_HOURS = 24;
+
+    const input = document.getElementById('password-input');
+    const errorMessage = document.getElementById('error-message');
+    
+    function getLockoutTime() {
+        return localStorage.getItem('lockoutUntil');
+    }
+
+    function isLockedOut() {
+        const lockoutUntil = getLockoutTime();
+        if (lockoutUntil) {
+            const now = new Date().getTime();
+            if (now < parseInt(lockoutUntil)) {
+                const remainingTime = Math.ceil((parseInt(lockoutUntil) - now) / (1000 * 60 * 60)); 
+                errorMessage.textContent = `Portal bloqueado. Inténtalo de nuevo en aproximadamente ${remainingTime} horas.`;
+                return true;
+            } else {
+                localStorage.removeItem('loginAttempts');
+                localStorage.removeItem('lockoutUntil');
+                return false;
+            }
+        }
+        return false;
+    }
+
+    if (isLockedOut()) {
+        input.disabled = true;
+        document.querySelector('.login-container button').disabled = true;
+    }
+
+    function checkPassword() {
+        if (isLockedOut()) return;
+
+        const attempts = parseInt(localStorage.getItem('loginAttempts') || '0');
+        const enteredPassword = input.value.toLowerCase().trim();
+
+        if (enteredPassword === CORRECT_PASSWORD) {
+            localStorage.removeItem('loginAttempts');
+            localStorage.removeItem('lockoutUntil');
+            window.location.href = 'menu.html'; 
+
+        } else {
+            const newAttempts = attempts + 1;
+            localStorage.setItem('loginAttempts', newAttempts);
+            
+            const remaining = MAX_ATTEMPTS - newAttempts;
+
+            if (remaining > 0) {
+                errorMessage.textContent = `Código incorrecto. Te quedan ${remaining} intento(s) para acceder al portal.`;
+            } else {
+                const lockoutUntil = new Date().getTime() + (LOCKOUT_HOURS * 60 * 60 * 1000);
+                localStorage.setItem('lockoutUntil', lockoutUntil);
+                localStorage.setItem('loginAttempts', 0);
+                
+                input.disabled = true;
+                document.querySelector('.login-container button').disabled = true;
+                errorMessage.textContent = `¡Portal sellado! Acceso bloqueado por ${LOCKOUT_HOURS} horas.`;
+            }
+        }
+        input.value = '';
+    }
+
+    input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            checkPassword();
+        }
+    });
+
+  </script>
+</body>
+</html>

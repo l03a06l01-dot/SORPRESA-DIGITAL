@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Próxima Sorpresa en Camino ⏳</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="main-background-image" class="bg-space"></div> <div id="background"></div>
+    <div id="particles"></div>
+
+    <div class="container coming-soon-container">
+        <h1>¡Algo increíble se está gestando! ✨</h1>
+        <p>Estamos trabajando arduamente en tu próxima sorpresa.</p>
+        <p>Regresa pronto para descubrir qué misterio te espera en el universo...</p>
+        
+        <a href="menu.html" class="back-to-menu-button">Volver al Menú Estelar 🚀</a>
+    </div>
+
+    <audio id="bgMusic2" src="musica2.mp3" loop autoplay></audio>
+    <script>
+        const bgMusic2 = document.getElementById("bgMusic2");
+        // Intentar reproducir la música inmediatamente
+        bgMusic2.play().catch(() => {});
+    </script>
+</body>
+</html>

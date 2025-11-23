@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minijuego Morat 🎶</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="main-background-image" class="bg-stars"></div> <div id="background"></div>
+    <div id="particles"></div>
+
+    <div class="container game-container">
+        <h1>Minijuego 1: Morat 🎤</h1> 
+        <p>Escucha el fragmento y elige el título correcto. ¡Tienes 5 rondas!</p>
+        
+        <div id="game-info">Ronda 1 de 5</div>
+        
+        <div class="audio-player">
+            <audio id="audio-clip" controls preload="auto"></audio>
+        </div>
+
+        <div id="options-container" class="game-buttons">
+            </div>
+
+        <div id="feedback-message"></div>
+        
+        <div id="final-result" style="margin-top: 30px; font-size: 1.5rem; display: none;"></div>
+
+        <a href="menu.html" class="back-to-menu-button">Volver al Menú Principal 🚀</a>
+    </div>
+
+    <script>
+        const QUESTIONS = [
+            { clip: 'morat_clip1.mp3', answer: 'Besos en Guerra', options: ['Aprender a Quererte', 'Besos en Guerra', 'Mi Vida Entera', 'No Termino'] },
+            { clip: 'morat_clip2.mp3', answer: 'No Se Va', options: ['No Se Va', 'Porfa No Te Vayas', 'Bajo la Mesa', 'Yo Contigo, Tú Conmigo'] },
+            { clip: 'morat_clip3.mp3', answer: 'Cómo Te Atreves', options: ['Cómo Te Atreves', 'Al Aire', 'Llamada Perdida', '506'] },
+            { clip: 'morat_clip4.mp3', answer: 'Cuando Nadie Ve', options: ['Punto y Aparte', 'De Cero', 'Cuando Nadie Ve', 'Antes de los Veinte'] },
+            { clip: 'morat_clip5.mp3', answer: 'Mi Nuevo Vicio', options: ['Mi Nuevo Vicio', 'Cuando el Amor Muere', 'Primeras Veces', 'Valen Más'] },
+        ];
+        
+        let currentRound = 0;
+        let score = 0;
+        let isProcessing = false;
+
+        const audio = document.getElementById('audio-clip');
+        const optionsContainer = document.getElementById('options-container');
+        const gameInfo = document.getElementById('game-info');
+        const feedbackMessage = document.getElementById('feedback-message');
+        const finalResult = document.getElementById('final-result');
+
+        function startRound() {
+            if (currentRound >= QUESTIONS.length) {
+                showFinalResults();
+                return;
+            }
+
+            isProcessing = false;
+            const question = QUESTIONS[currentRound];
+            
+            gameInfo.textContent = `Ronda ${currentRound + 1} de ${QUESTIONS.length}`;
+            audio.src = question.clip;
+            feedbackMessage.textContent = '¡Escucha atentamente!';
+            
+            optionsContainer.innerHTML = '';
+            question.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.onclick = () => checkAnswer(option, question.answer);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedOption, correctAnswer) {
+            if (isProcessing) return;
+            isProcessing = true;
+            
+            audio.pause();
+            audio.currentTime = 0;
+
+            if (selectedOption === correctAnswer) {
+                score++;
+                feedbackMessage.className = 'correct-answer';
+                feedbackMessage.textContent = `¡Correcto! " ${correctAnswer} " es la canción.`;
+            } else {
+                feedbackMessage.className = 'incorrect-answer';
+                feedbackMessage.textContent = `Incorrecto. La respuesta correcta era: " ${correctAnswer} ".`;
+            }
+
+            optionsContainer.querySelectorAll('button').forEach(btn => btn.disabled = true);
+            
+            setTimeout(() => {
+                currentRound++;
+                startRound();
+            }, 3000); 
+        }
+
+        function showFinalResults() {
+            optionsContainer.innerHTML = '';
+            audio.style.display = 'none';
+            gameInfo.textContent = '¡Juego Terminado!';
+            feedbackMessage.style.display = 'none';
+            finalResult.style.display = 'block';
+            
+            let message = '';
+            if (score === QUESTIONS.length) {
+                message = `¡PERFECTO! 🥇 Tuviste ${score} de ${QUESTIONS.length}. ¡Eres la fan #1!`;
+                finalResult.style.color = '#ffc400'; 
+            } else if (score >= 3) {
+                message = `¡Muy bien! Sacaste ${score} de ${QUESTIONS.length}. ¡Conoces bien a Morat!`;
+                finalResult.style.color = '#50fa7b'; 
+            } else {
+                message = `Tuviste ${score} de ${QUESTIONS.length}. ¡A repasar la discografía! 😉`;
+                finalResult.style.color = '#ff6b6b'; 
+            }
+            finalResult.textContent = message;
+        }
+
+        startRound();
+    </script>
+</body>
+</html>

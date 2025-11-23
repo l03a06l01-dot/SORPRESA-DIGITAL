@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Nunito:wght@300;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Great+Vibes&display=swap');
 
 * {
   margin: 0;
@@ -12,9 +12,46 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #333;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   position: relative;
+  background-color: #0d1a2f; 
+  color: #e0e6f0; 
+}
+
+/* --- CLASE DE TEXTO OSCURO PARA FONDOS CLAROS --- */
+.dark-text {
+  color: #333 !important; 
+  text-shadow: none !important; 
+}
+
+/* --- CLASES ESPECÍFICAS PARA EL MENSAJE ESPECIAL (DETALLE1.HTML) --- */
+/* Título Rosa Vibrante con sombra */
+.pink-vibes-text {
+  color: #ff4b5c !important; /* Rosa vibrante */
+  text-shadow: 0 0 10px rgba(255, 75, 92, 0.8), 
+               0 0 20px rgba(255, 75, 92, 0.5) !important; 
+}
+/* Párrafo Blanco/Claro (ajustado para fondos oscuros) */
+.light-message-text {
+  color: #F0F8FF !important; /* Blanco suave */
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.7) !important; 
+}
+
+
+/* Estilos de contenedor general para las tarjetas */
+.container {
+  text-align: center;
+  max-width: 800px;
+  padding: 40px;
+  background-color: rgba(255, 255, 255, 0.1); 
+  border-radius: 20px; 
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4); 
+  backdrop-filter: blur(10px); 
+  border: 1px solid rgba(255, 255, 255, 0.15); 
+  opacity: 1;
+  transition: opacity 1.5s ease;
+  z-index: 10;
+  color: #e0e6f0; 
 }
 
 /* Base estilo para el contenedor de la imagen de fondo */
@@ -26,21 +63,20 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   z-index: -3; 
-  /* Añadimos transición para que el cambio de fondo sea suave */
   transition: background-image 1.5s ease-in-out;
 }
 
 /* CLASES DE FONDOS ESPECÍFICOS */
 .bg-floral {
-    background-image: url('fondo3.jpg'); /* Fondo floral/minimalista */
+    background-image: url('fondo3.jpg'); 
 }
 
 .bg-space {
-    background-image: url('fondo2.jpg'); /* Fondo de espacio/planetas */
+    background-image: url('fondo2.jpg'); 
 }
 
 .bg-stars {
-    background-image: url('fondo1.jpg'); /* Fondo de estrellas */
+    background-image: url('fondo1.jpg'); 
 }
 
 /* Estilo para la capa de blur que va sobre la imagen */
@@ -48,17 +84,14 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
-  /* Reducido el blur inicial de 20px a 10px para mejor visibilidad del fondo */
-  backdrop-filter: blur(10px); 
+  backdrop-filter: blur(5px) brightness(0.8);
   animation: blurShift 10s infinite alternate ease-in-out;
   z-index: -2;
 }
 
 @keyframes blurShift {
-  /* Reducido el blur mínimo de 15px a 5px y el brillo mínimo de 1 a 0.9 */
-  0% { backdrop-filter: blur(5px) brightness(0.9); } 
-  /* Reducido el blur máximo de 25px a 15px y el brillo máximo de 1.3 a 1.1 */
-  100% { backdrop-filter: blur(15px) brightness(1.1); } 
+  0% { backdrop-filter: blur(3px) brightness(0.75); } 
+  100% { backdrop-filter: blur(7px) brightness(0.85); } 
 }
 
 #particles {
@@ -71,25 +104,18 @@ body {
 
 .particle {
   position: absolute;
-  width: 6px;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.7);
+  width: 4px; 
+  height: 4px;
+  background: rgba(255, 255, 255, 0.8);
   border-radius: 50%;
-  animation: float 8s infinite ease-in-out;
+  animation: float 10s infinite ease-in-out; 
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.6); 
 }
 
 @keyframes float {
   0% { transform: translateY(0); opacity: 0.6; }
   50% { opacity: 1; }
   100% { transform: translateY(-100vh); opacity: 0; }
-}
-
-.container {
-  text-align: center;
-  max-width: 800px;
-  padding: 40px;
-  opacity: 1;
-  transition: opacity 1.5s ease;
 }
 
 .fade-out {
@@ -102,38 +128,257 @@ body {
 
 h1 {
   font-family: 'Great Vibes', cursive;
-  font-size: 2.8rem;
-  color: #d6336c;
-  margin-bottom: 20px;
+  font-size: 3.5rem; 
+  color: #ffc400; 
+  margin-bottom: 25px;
+  text-shadow: 0 0 10px rgba(255, 196, 0, 0.6); 
 }
 
 p {
+  font-family: 'Montserrat', sans-serif;
   font-size: 1.2rem;
-  line-height: 1.7;
-  /* CAMBIOS AQUÍ: Color amarillo brillante y negrita para visibilidad */
-  color: #ffc400; /* Color amarillo brillante */
-  font-weight: 600; /* Negrita */
-  /* Fin de cambios */
-  min-height: 120px;
-  margin-bottom: 15px;
+  line-height: 1.8;
+  color: #F0F8FF; 
+  min-height: 40px; 
+  margin-bottom: 20px;
   white-space: pre-line;
+  font-weight: 600; 
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.7); 
 }
 
-button {
-  background-color: #ff4b5c;
+/* Estilo general para botones */
+button, .button-link {
+  background: linear-gradient(135deg, #ff4b5c, #d6336c); 
   border: none;
   color: white;
-  padding: 12px 30px;
-  border-radius: 25px;
-  font-size: 1.1rem;
+  padding: 15px 35px; 
+  border-radius: 30px; 
+  font-size: 1.15rem;
   cursor: pointer;
-  margin-top: 20px;
-  font-weight: 600;
-  transition: 0.3s ease;
-  box-shadow: 0 0 15px rgba(255, 75, 92, 0.6);
+  margin-top: 25px;
+  font-weight: 700; 
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 20px rgba(255, 75, 92, 0.5);
+  text-decoration: none; 
+  display: inline-flex; 
+  align-items: center;
+  justify-content: center;
+  gap: 8px; 
 }
 
-button:hover {
-  transform: scale(1.08);
-  box-shadow: 0 0 25px rgba(255, 75, 92, 1);
+button:hover, .button-link:hover {
+  transform: translateY(-3px) scale(1.03); 
+  box-shadow: 0 8px 25px rgba(255, 75, 92, 0.8);
+  background: linear-gradient(135deg, #d6336c, #ff4b5c); 
+}
+
+/* Estilos específicos para la pantalla de login (que usa fondo3 - fondo claro) */
+.login-container h1 {
+  font-family: 'Great Vibes', cursive;
+  font-size: 3.8rem;
+  color: #ff4b5c; 
+  text-shadow: 0 0 10px rgba(255, 75, 92, 0.5);
+  margin-bottom: 20px;
+}
+.login-container p {
+    color: #333; 
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-shadow: none;
+}
+.login-container input[type="password"] {
+  padding: 12px 20px;
+  margin-top: 25px;
+  margin-bottom: 25px;
+  border: 2px solid #aaa; 
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+  font-size: 1.2rem;
+  text-align: center;
+  color: #333; 
+  transition: border-color 0.3s, background-color 0.3s;
+  width: 70%;
+  max-width: 300px;
+}
+.login-container input[type="password"]::placeholder {
+    color: #666;
+}
+.login-container input[type="password"]:focus {
+  border-color: #d6336c;
+  background-color: rgba(255, 255, 255, 0.9);
+  outline: none;
+}
+#error-message {
+  color: #d6336c; 
+  font-weight: 700;
+  margin-top: 15px;
+  min-height: 25px; 
+  text-shadow: none;
+}
+
+/* Estilos para el menú de opciones (que usa fondo3 - fondo claro) */
+.menu-container h1 {
+    font-size: 3.5rem;
+    margin-bottom: 30px;
+    color: #ff4b5c;
+    text-shadow: 0 0 10px rgba(255, 75, 92, 0.5);
+}
+.menu-container p {
+    font-size: 1.3rem;
+    color: #333; 
+    margin-bottom: 40px;
+    text-shadow: none;
+    font-weight: 600;
+}
+.menu-grid {
+    display: flex; 
+    flex-wrap: wrap; 
+    justify-content: center;
+    gap: 30px; 
+    margin-top: 40px;
+}
+.menu-button {
+    min-width: 250px; 
+    flex-grow: 1; 
+}
+#next-gift-button {
+    background: linear-gradient(135deg, #4b5cff, #336cd6); 
+    box-shadow: 0 5px 20px rgba(75, 92, 255, 0.5);
+    margin-top: 50px; 
+}
+#next-gift-button:hover {
+    background: linear-gradient(135deg, #336cd6, #4b5cff);
+    box-shadow: 0 8px 25px rgba(75, 92, 255, 0.8);
+}
+
+
+/* Estilos para el detalle1.html (Mensaje Especial) */
+.message-override h1 {
+    /* Base para títulos en detalle1 */
+    color: #ffc400 !important; 
+    text-shadow: 0 0 10px rgba(255, 196, 0, 0.8), 
+                 0 0 20px rgba(255, 196, 0, 0.5) !important; 
+}
+.message-override p {
+    /* Base para párrafos en detalle1 */
+    color: white !important;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.9) !important; 
+}
+
+/* Estilos para el minijuego */
+.game-container h1 {
+    font-size: 2.8rem;
+    color: #ffc400;
+    margin-bottom: 15px;
+}
+.game-container p {
+    color: #F0F8FF; 
+    font-size: 1.15rem;
+    margin-bottom: 10px;
+}
+.audio-player {
+    margin: 25px auto;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.15); 
+    border-radius: 12px;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.audio-player audio {
+    width: 100%; 
+}
+.game-container .game-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 15px;
+    margin-top: 30px;
+    padding: 0 20px; 
+}
+.game-buttons button {
+    width: 100%;
+    background: linear-gradient(135deg, #ff4b5c, #d6336c);
+    padding: 15px 20px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 75, 92, 0.3);
+}
+.game-buttons button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+    opacity: 0.6;
+    box-shadow: none;
+}
+#feedback-message {
+    margin-top: 25px;
+    font-size: 1.25rem;
+    min-height: 30px;
+    font-weight: 700;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+.correct-answer {
+    color: #50fa7b; 
+}
+.incorrect-answer {
+    color: #ff6b6b; 
+}
+#game-info {
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #e0e6f0;
+    font-size: 1.1rem;
+}
+#final-result {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-top: 30px;
+    color: #ffc400; 
+    text-shadow: 0 0 8px rgba(255, 196, 0, 0.5);
+}
+
+/* --- BOTÓN DE VOLVER AL MENÚ MEJORADO (USADO EN TODAS LAS PÁGINAS) --- */
+.back-to-menu-button {
+    background: linear-gradient(135deg, #5c4bff, #336cd6); /* Azul vibrante */
+    color: white;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-top: 40px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 5px 20px rgba(92, 75, 255, 0.4);
+    transition: all 0.3s ease;
+}
+
+.back-to-menu-button:hover {
+    background: linear-gradient(135deg, #336cd6, #5c4bff);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(92, 75, 255, 0.6);
+}
+
+@media (max-width: 600px) {
+    .game-container .game-buttons {
+        grid-template-columns: 1fr; 
+    }
+}
+
+
+/* Estilos para la página de "Próximo Regalo" */
+.coming-soon-container h1 {
+    font-size: 3.5rem;
+    color: #a8dadc;
+    margin-bottom: 25px;
+    text-shadow: 0 0 10px rgba(168, 218, 220, 0.6);
+}
+.coming-soon-container p {
+    font-size: 1.4rem;
+    color: #F0F8FF; 
+    margin-bottom: 30px;
 }
