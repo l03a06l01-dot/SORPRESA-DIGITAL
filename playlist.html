@@ -10,23 +10,31 @@
             text-align: center;
             max-width: 900px;
             padding: 40px;
-            /* Usamos un fondo claro para mejor legibilidad de las tarjetas de música */
+            /* Usamos un fondo CLARO para mejor legibilidad de las tarjetas de música */
             background-color: rgba(255, 255, 255, 0.9);
             border-radius: 20px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
             color: #333; /* Texto oscuro */
+            
+            /* Ajuste para centrar el botón de regreso */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .playlist-container h1 {
-            color: #ff4b5c; /* Rosa de tu tema */
-            text-shadow: none;
+            color: #ff4b5c; /* Rosa de tu tema (Ahora visible sobre blanco) */
+            text-shadow: 0 0 5px rgba(255, 75, 92, 0.5); /* Sombra para el título */
             margin-bottom: 25px;
+            font-size: 3.5rem; /* Asegurar tamaño grande */
         }
         .playlist-container p {
             color: #555;
             font-size: 1.1rem;
             margin-bottom: 30px;
+            font-weight: 600;
         }
         #playlist-grid {
+            width: 100%; /* Ocupa todo el espacio del contenedor */
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
@@ -50,7 +58,7 @@
     <div id="background"></div>
     <div id="particles"></div>
 
-    <div class="container playlist-container">
+    <div class="container playlist-container dark-text">
         <h1>Canciones que Me Hacen Pensar en Ti ❤️</h1>
         <p>Esta playlist se actualiza automáticamente desde mi celular. ¡Disfruta la música!</p>
         
@@ -61,13 +69,13 @@
         <a href="menu.html" class="back-to-menu-button">Volver al Menú Principal 🚀</a>
     </div>
 
-    <audio id="bgMusic" src="musica5.mp3" loop autoplay></audio>
+    <audio id="bgMusic" src="musica0.mp3" loop autoplay></audio>
     <script>
         const bgMusic = document.getElementById("bgMusic");
         bgMusic.play().catch(() => {});
         
-        // ⚠️ REEMPLAZA ESTA URL con la URL de tu Apps Script para la playlist.
-        const API_PLAYLIST_URL = https: '//script.google.com/macros/s/AKfycby8drTc25-SyB7T8ur8V8XonrmmgDay6IM9LO6U4Fx1CjfzAb_6zVMXEA305uDHh0jRpw/exec' ; 
+        // URL de la API de la Playlist (VERIFICADA)
+        const API_PLAYLIST_URL = 'https://script.google.com/macros/s/AKfycby8drTc25-SyB7T8ur8V8XonrmmgDay6IM9LO6U4Fx1CjfzAb_6zVMXEA305uDHh0jRpw/exec'; 
         
         const playlistGrid = document.getElementById('playlist-grid');
 
@@ -78,14 +86,17 @@
             // 1. YouTube estándar: https://www.youtube.com/watch?v=ID -> https://www.youtube.com/embed/ID
             const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&]+)/i);
             if (ytMatch && ytMatch[1]) {
-                return `https://www.youtube.com/embed/${ytMatch[1]}`;
+                return `https://www.youtube.com/embed/${ytMatch[1]}?controls=1&showinfo=0&rel=0`;
             }
             
-            // 2. Spotify: Pega el enlace de COMPARTIR, NO el enlace de incrustación HTML.
-            // Ej: https://open.spotify.com/track/ID?si=... -> https://open.spotify.com/embed/track/ID
+            // 2. Spotify: Pega el enlace de COMPARTIR (open.spotify.com/...)
             const spMatch = url.match(/(open\.spotify\.com\/(?:track|album|playlist)\/[a-zA-Z0-9]+)/);
             if (spMatch) {
-                return `https://open.spotify.com/embed/${spMatch[1].replace('open.spotify.com/', '')}`;
+                const parts = spMatch[1].split('/');
+                const type = parts[1]; // track, album, playlist
+                const id = parts[2];
+                // Usamos el formato embed URI de Spotify
+                return `https://embed.spotify.com/?uri=spotify:${type}:${id}`;
             }
 
             // Si el link ya está en formato embed o es otra cosa, lo devuelve tal cual.
@@ -93,7 +104,7 @@
         }
 
         async function fetchPlaylist() {
-            playlistGrid.innerHTML = '';
+            playlistGrid.innerHTML = '<p style="color: #666;">Cargando playlist...</p>';
             
             try {
                 const response = await fetch(API_PLAYLIST_URL);
@@ -102,20 +113,30 @@
                 }
                 const links = await response.json();
                 
-                if (links.length === 0 || links.every(link => !link.trim())) {
+                playlistGrid.innerHTML = '';
+                
+                const validLinks = links.filter(link => link && link.trim());
+
+                if (validLinks.length === 0) {
                     playlistGrid.innerHTML = '<p style="color: #999;">Aún no hay canciones en la playlist. ¡Añade algunas a la hoja de cálculo!</p>';
                     return;
                 }
 
-                links.forEach(link => {
+                validLinks.forEach(link => {
                     const embedUrl = getEmbedUrl(link.trim());
                     
                     if (embedUrl) {
+                        const isSpotify = embedUrl.includes('http://googleusercontent.com/spotify.com/9');
+                        
                         const embedCode = `
                             <div class="embed-card">
                                 <iframe 
                                     src="${embedUrl}" 
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                                    width="100%" 
+                                    height="${isSpotify ? '300' : '315'}"
+                                    frameborder="0"
+                                    allowtransparency="true"
+                                    allow="encrypted-media; fullscreen"
                                 ></iframe>
                             </div>
                         `;
@@ -125,7 +146,7 @@
 
             } catch (error) {
                 console.error("Error al cargar la playlist:", error);
-                playlistGrid.innerHTML = '<p style="color: red;">Error al cargar la playlist. Verifica la URL de la API y los permisos.</p>';
+                playlistGrid.innerHTML = '<p style="color: red;">Error al cargar la playlist. Verifica la URL de la API, los permisos y la conexión a internet.</p>';
             }
         }
 

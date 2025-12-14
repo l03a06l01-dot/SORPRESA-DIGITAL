@@ -22,7 +22,7 @@
   </div>
 
   <script>
-    // ⚠️ REEMPLAZA ESTA URL con la URL de tu API de Notificación (Paso 2)
+    // URL de la API de Notificación (REEMPLAZADA CON TU ENLACE)
     const API_NOTIFICACION_URL = 'https://script.google.com/macros/s/AKfycbyld057eVuvWBljmE3fPsPkaojryGewURITdFbDN_O1In2wF6HCL4CNthOPwjyq_LqACA/exec'; 
     
     const CORRECT_PASSWORD = "1101"; 
@@ -34,6 +34,7 @@
     
     // --- FUNCIÓN DE NOTIFICACIÓN ---
     function enviarNotificacion() {
+        // Ejecutamos la llamada de forma asíncrona y silenciosa
         fetch(API_NOTIFICACION_URL)
             .then(response => {
                 if (response.ok) {
@@ -45,7 +46,7 @@
             .catch(error => console.error("Error de red al intentar notificar:", error));
     }
 
-    // --- LÓGICA DE BLOQUEO Y CONTRASEÑA (EXISTENTE) ---
+    // --- LÓGICA DE BLOQUEO Y CONTRASEÑA ---
     function getLockoutTime() {
         return localStorage.getItem('lockoutUntil');
     }
@@ -72,7 +73,7 @@
         input.disabled = true;
         document.querySelector('.login-container button').disabled = true;
     } else {
-        // Solo notificar si no está bloqueado. Esto se ejecuta cada vez que se carga index.html
+        // Enviar notificación solo si la página no está bloqueada.
         enviarNotificacion();
     }
 
@@ -83,11 +84,15 @@
         const enteredPassword = input.value.toLowerCase().trim();
 
         if (enteredPassword === CORRECT_PASSWORD) {
+            // ÉXITO: Redirección inmediata
             localStorage.removeItem('loginAttempts');
             localStorage.removeItem('lockoutUntil');
-            window.location.href = 'menu.html'; 
-
+            
+            // Usamos replace para evitar que el botón de atrás regrese al login
+            window.location.replace('menu.html'); 
+            
         } else {
+            // FALLO: Lógica de intentos
             const newAttempts = attempts + 1;
             localStorage.setItem('loginAttempts', newAttempts);
             
@@ -110,6 +115,7 @@
 
     input.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
+            e.preventDefault(); // Crucial para que la redirección funcione al presionar Enter
             checkPassword();
         }
     });
