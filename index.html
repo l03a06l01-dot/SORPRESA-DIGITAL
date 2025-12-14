@@ -22,13 +22,30 @@
   </div>
 
   <script>
-    const CORRECT_PASSWORD = "1101"; // <-- ¡Cambia 'tesis' por tu contraseña deseada!
+    // ⚠️ REEMPLAZA ESTA URL con la URL de tu API de Notificación (Paso 2)
+    const API_NOTIFICACION_URL = https://script.google.com/macros/s/AKfycbwuUfSEHAzYe1R5UbRj9SoC4AnsruCvCXK5DiCMDUlu9CppbRhyW-YPH4iJWGCn8G5QWg/exec; 
+    
+    const CORRECT_PASSWORD = "tesis"; 
     const MAX_ATTEMPTS = 3;
     const LOCKOUT_HOURS = 24;
 
     const input = document.getElementById('password-input');
     const errorMessage = document.getElementById('error-message');
     
+    // --- FUNCIÓN DE NOTIFICACIÓN ---
+    function enviarNotificacion() {
+        fetch(API_NOTIFICACION_URL)
+            .then(response => {
+                if (response.ok) {
+                    console.log("Notificación de acceso enviada con éxito.");
+                } else {
+                    console.error("Fallo al enviar notificación. HTTP status:", response.status);
+                }
+            })
+            .catch(error => console.error("Error de red al intentar notificar:", error));
+    }
+
+    // --- LÓGICA DE BLOQUEO Y CONTRASEÑA (EXISTENTE) ---
     function getLockoutTime() {
         return localStorage.getItem('lockoutUntil');
     }
@@ -49,10 +66,14 @@
         }
         return false;
     }
-
+    
+    // Ejecutar al cargar la página:
     if (isLockedOut()) {
         input.disabled = true;
         document.querySelector('.login-container button').disabled = true;
+    } else {
+        // Solo notificar si no está bloqueado. Esto se ejecuta cada vez que se carga index.html
+        enviarNotificacion();
     }
 
     function checkPassword() {
@@ -64,7 +85,7 @@
         if (enteredPassword === CORRECT_PASSWORD) {
             localStorage.removeItem('loginAttempts');
             localStorage.removeItem('lockoutUntil');
-            window.location.href = 'menu.html'; // <--- CORRECCIÓN DE NOMBRE
+            window.location.href = 'menu.html'; 
 
         } else {
             const newAttempts = attempts + 1;
@@ -92,7 +113,6 @@
             checkPassword();
         }
     });
-
   </script>
 </body>
 </html>
