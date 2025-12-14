@@ -33,24 +33,42 @@
             margin-bottom: 30px;
             font-weight: 600;
         }
+        
+        /* --- MODIFICACIÓN CLAVE: GRID RESPONSIVO --- */
         #playlist-grid {
-            width: 100%; /* Ocupa todo el espacio del contenedor */
+            width: 100%; 
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            /* Permite que los videos sean más pequeños en móviles (mínimo 280px) */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
             margin-top: 20px;
         }
+        
         .embed-card {
             background-color: #fff;
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
+        
+        /* --- MODIFICACIÓN CLAVE: MANTENER ASPECT RATIO 16:9 --- */
+        .video-responsive {
+            position: relative;
+            padding-bottom: 56.25%; /* (9 / 16) * 100 = 56.25% (Proporción 16:9) */
+            height: 0;
+            overflow: hidden;
+        }
+
         .embed-card iframe {
+            /* Ocupa el 100% del contenedor responsive */
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: 315px; /* Altura estándar para reproductores */
+            height: 100%;
             border: none;
         }
+        /* ---------------------------------------------------- */
     </style>
 </head>
 <body>
@@ -83,23 +101,22 @@
         function getEmbedUrl(url) {
             if (!url) return null;
             
-            // 1. YouTube estándar: https://www.youtube.com/watch?v=ID -> https://www.youtube.com/embed/ID
-            const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&]+)/i);
+            // Expresión regular robusta para obtener el ID de YouTube
+            const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?#]+)/i);
             if (ytMatch && ytMatch[1]) {
                 return `https://www.youtube.com/embed/${ytMatch[1]}?controls=1&showinfo=0&rel=0`;
             }
             
-            // 2. Spotify: Pega el enlace de COMPARTIR (open.spotify.com/...)
+            // Lógica para Spotify
             const spMatch = url.match(/(open\.spotify\.com\/(?:track|album|playlist)\/[a-zA-Z0-9]+)/);
             if (spMatch) {
                 const parts = spMatch[1].split('/');
-                const type = parts[1]; // track, album, playlist
+                const type = parts[1];
                 const id = parts[2];
-                // Usamos el formato embed URI de Spotify
-                return `https://embed.spotify.com/?uri=spotify:${type}:${id}`;
+                // Formato embed URI de Spotify
+                return `https://open.spotify.com/embed/track/ID1{type}:${id}`;
             }
 
-            // Si el link ya está en formato embed o es otra cosa, lo devuelve tal cual.
             return url;
         }
 
@@ -108,9 +125,14 @@
             
             try {
                 const response = await fetch(API_PLAYLIST_URL);
+                
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    if (response.status === 403) {
+                         throw new Error(`Error 403: Acceso denegado. Verifica los permisos del Apps Script ("Cualquiera").`);
+                    }
+                    throw new Error(`Error HTTP! estado: ${response.status}`);
                 }
+                
                 const links = await response.json();
                 
                 playlistGrid.innerHTML = '';
@@ -126,18 +148,19 @@
                     const embedUrl = getEmbedUrl(link.trim());
                     
                     if (embedUrl) {
-                        const isSpotify = embedUrl.includes('http://googleusercontent.com/spotify.com/9');
+                        const isSpotify = embedUrl.includes('https://open.spotify.com/embed/track/ID2');
                         
+                        // Contenedor video-responsive para mantener el aspect ratio 16:9
                         const embedCode = `
                             <div class="embed-card">
-                                <iframe 
-                                    src="${embedUrl}" 
-                                    width="100%" 
-                                    height="${isSpotify ? '300' : '315'}"
-                                    frameborder="0"
-                                    allowtransparency="true"
-                                    allow="encrypted-media; fullscreen"
-                                ></iframe>
+                                <div class="video-responsive">
+                                    <iframe 
+                                        src="${embedUrl}" 
+                                        frameborder="0"
+                                        allowtransparency="true"
+                                        allow="encrypted-media; fullscreen"
+                                    ></iframe>
+                                </div>
                             </div>
                         `;
                         playlistGrid.insertAdjacentHTML('beforeend', embedCode);
@@ -146,7 +169,8 @@
 
             } catch (error) {
                 console.error("Error al cargar la playlist:", error);
-                playlistGrid.innerHTML = '<p style="color: red;">Error al cargar la playlist. Verifica la URL de la API, los permisos y la conexión a internet.</p>';
+                playlistGrid.innerHTML = `<p style="color: red;">¡Error de Conexión! Detalle: ${error.message}. 
+                                        Verifica la URL, los permisos del Apps Script y que la columna A se llame LINK.</p>`;
             }
         }
 

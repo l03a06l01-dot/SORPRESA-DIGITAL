@@ -22,7 +22,7 @@
   </div>
 
   <script>
-    // URL de la API de Notificación (REEMPLAZADA CON TU ENLACE)
+    // URL de la API de Notificación (VERIFICADA)
     const API_NOTIFICACION_URL = 'https://script.google.com/macros/s/AKfycbyld057eVuvWBljmE3fPsPkaojryGewURITdFbDN_O1In2wF6HCL4CNthOPwjyq_LqACA/exec'; 
     
     const CORRECT_PASSWORD = "1101"; 
@@ -34,7 +34,6 @@
     
     // --- FUNCIÓN DE NOTIFICACIÓN ---
     function enviarNotificacion() {
-        // Ejecutamos la llamada de forma asíncrona y silenciosa
         fetch(API_NOTIFICACION_URL)
             .then(response => {
                 if (response.ok) {
@@ -73,7 +72,6 @@
         input.disabled = true;
         document.querySelector('.login-container button').disabled = true;
     } else {
-        // Enviar notificación solo si la página no está bloqueada.
         enviarNotificacion();
     }
 
@@ -84,7 +82,6 @@
         const enteredPassword = input.value.toLowerCase().trim();
 
         if (enteredPassword === CORRECT_PASSWORD) {
-            // ÉXITO: Redirección inmediata
             localStorage.removeItem('loginAttempts');
             localStorage.removeItem('lockoutUntil');
             
@@ -92,7 +89,6 @@
             window.location.replace('menu.html'); 
             
         } else {
-            // FALLO: Lógica de intentos
             const newAttempts = attempts + 1;
             localStorage.setItem('loginAttempts', newAttempts);
             
@@ -115,7 +111,7 @@
 
     input.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
-            e.preventDefault(); // Crucial para que la redirección funcione al presionar Enter
+            e.preventDefault(); 
             checkPassword();
         }
     });
