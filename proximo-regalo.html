@@ -5,6 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Próxima Sorpresa en Camino ⏳</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Estilos para la cuenta regresiva */
+        #countdown {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem; /* Ajuste el tamaño de fuente general */
+            font-weight: 700;
+            color: #ffc400; /* Amarillo brillante */
+            margin: 30px 0;
+            text-shadow: 0 0 15px rgba(255, 196, 0, 0.8);
+            
+            /* --- CAMBIOS CLAVE PARA LA VISTA HORIZONTAL --- */
+            display: flex;
+            justify-content: center; /* Centrar los bloques */
+            gap: 20px; /* Espacio entre Días/Horas/Minutos/Segundos */
+            /* ------------------------------------------- */
+        }
+        
+        .time-unit {
+            /* Muestra las unidades (Días, Horas) debajo de los valores */
+            display: block; 
+            margin-top: 5px;
+            font-size: 0.8rem;
+            color: #a8dadc;
+            text-shadow: none;
+            font-weight: 300;
+            text-transform: uppercase;
+        }
+        
+        .time-value {
+            /* Muestra el número grande */
+            font-size: 2.8rem; /* Tamaño grande para los números */
+            display: block;
+            line-height: 1;
+        }
+        
+        .time-block {
+            /* Contenedor individual para cada unidad (Días, Horas, etc.) */
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <div id="main-background-image" class="bg-space"></div> <div id="background"></div>
@@ -12,16 +52,58 @@
 
     <div class="container coming-soon-container">
         <h1>¡Algo increíble se está gestando! ✨</h1>
-        <p>Estamos trabajando arduamente en tu próxima sorpresa.</p>
-        <p>Regresa pronto para descubrir qué misterio te espera en el universo...</p>
+        <p>Tu próxima sorpresa se desbloquea cuando el contador llegue a cero.</p>
         
+        <div id="countdown">
+            <div id="days" class="time-block"><span class="time-value">00</span><span class="time-unit">Días</span></div>
+            <div id="hours" class="time-block"><span class="time-value">00</span><span class="time-unit">Horas</span></div>
+            <div id="minutes" class="time-block"><span class="time-value">00</span><span class="time-unit">Minutos</span></div>
+            <div id="seconds" class="time-block"><span class="time-value">00</span><span class="time-unit">Segundos</span></div>
+        </div>
+        
+        <p style="font-size: 1.1rem; color: #a8dadc;">(Regresa pronto a esta página para ver el contador en acción)</p>
+
         <a href="menu.html" class="back-to-menu-button">Volver al Menú Estelar 🚀</a>
     </div>
 
-    <audio id="bgMusic2" src="musica2.mp3" loop autoplay></audio>
+    <audio id="bgMusic2" src="musica4.mp3" loop autoplay></audio>
     <script>
         const bgMusic2 = document.getElementById("bgMusic2");
         bgMusic2.play().catch(() => {});
+
+        // --- LÓGICA DE CUENTA REGRESIVA ---
+        
+        // Establece la fecha de destino: 11 de Enero del próximo año, a las 00:00:00
+        let countDownDate = new Date("Jan 11, " + (new Date().getFullYear() + 1) + " 00:00:00").getTime();
+        
+        // Si la fecha actual ya pasó, usa el año actual (esto evita bugs si la fecha de destino ya pasó)
+        const now = new Date();
+        if (countDownDate < now.getTime() && now.getMonth() < 1) { 
+             countDownDate = new Date("Jan 11, " + new Date().getFullYear() + " 00:00:00").getTime();
+        }
+
+        const countdownFunction = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = countDownDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            if (distance < 0) {
+                // Si el tiempo ha terminado, redirigir a la página final
+                clearInterval(countdownFunction);
+                document.getElementById("countdown").innerHTML = "¡REGALO DESBLOQUEADO!";
+                window.location.href = 'proximo-regalo-final.html'; 
+            } else {
+                // Actualizar la interfaz con los nuevos contenedores .time-value y .time-unit
+                document.getElementById("days").innerHTML = `<span class="time-value">${days}</span><span class="time-unit">Días</span>`;
+                document.getElementById("hours").innerHTML = `<span class="time-value">${hours}</span><span class="time-unit">Horas</span>`;
+                document.getElementById("minutes").innerHTML = `<span class="time-value">${minutes}</span><span class="time-unit">Minutos</span>`;
+                document.getElementById("seconds").innerHTML = `<span class="time-value">${seconds}</span><span class="time-unit">Segundos</span>`;
+            }
+        }, 1000);
     </script>
 </body>
 </html>

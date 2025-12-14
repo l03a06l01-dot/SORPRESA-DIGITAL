@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¡Fuerza en la Tesis! 💪</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="main-background-image" class="bg-stars"></div>
+  <div id="background"></div>
+  <div id="particles"></div>
+
+  <div class="container fade-in" id="content2">
+    <h1 id="title2"></h1>
+    <p id="message2"></p>
+    <button id="nextButton2">¡Vamos! 🥳</button>
+  </div>
+
+  <audio id="bgMusic" src="musica3.mp3" loop autoplay></audio>
+  <script>
+    // Script específico para esta página
+    const screens2 = [
+      {
+        title: "¡Esta es tu última gran batalla! 🏆",
+        text: "Recuerda todo lo que has trabajado hasta aquí mi niña. No es solo una sustentación, es la celebración de tu constancia y tu brillantez. ¡La recta final es tuya! ✨",
+        backgroundClass: "bg-space",
+        titleColorClass: "pink-vibes-text",
+        messageColorClass: "light-message-text"
+      },
+      {
+        title: "Tu mente es brillante, tu proyecto es sólido 🧠",
+        text: "Cada diapositiva, cada palabra, es el resultado de todo tu esfuerzo. Confía en el proceso y en la arquitecta increíble que vas a ser. ¡Estás más que lista! 🌷",
+        backgroundClass: "bg-stars",
+        titleColorClass: "", 
+        messageColorClass: "" 
+      },
+      {
+        title: "Imagina el peso que te quitas de encima... ¡ya casi! 🎈",
+        text: "Solo un paso más y esa tesis se convertirá en tu diploma. No hay nada que el jurado pueda preguntarte que tú no sepas. ¡Demuéstrales todo tu conocimiento preciosa! 💪",
+        backgroundClass: "bg-space",
+        titleColorClass: "pink-vibes-text",
+        messageColorClass: "light-message-text"
+      },
+      {
+        title: "La vida es un eco, lo que das, regresa. ¡Da lo mejor de ti cariño! 🌈",
+        text: "Hoy el universo conspira a tu favor. Que la tranquilidad y la alegría te acompañen en esta presentación. Te envío toda la energía positiva del mundo. 💖",
+        backgroundClass: "bg-stars",
+        titleColorClass: "", 
+        messageColorClass: "" 
+      },
+      {
+        title: "¡Sé que lo harás muy bien en tu sustentación mi cénit! 🌟",
+        text: "Pase lo que pase, ya eres una ganadora por haber llegado hasta aquí. Estoy orgullosísimo de ti.\n\nTe quiero y creo en ti niña. ¡A triunfar no dejes que nada ni nadie te detenga! ❤️",
+        backgroundClass: "bg-space",
+        titleColorClass: "pink-vibes-text",
+        messageColorClass: "light-message-text"
+      }
+    ];
+
+    const title2 = document.getElementById("title2");
+    const message2 = document.getElementById("message2");
+    const button2 = document.getElementById("nextButton2");
+    const content2 = document.getElementById("content2");
+    const mainBackground = document.getElementById("main-background-image"); 
+
+    let currentScreen2 = 0;
+    let typingInterval2;
+
+    function typeText2(text, element, callback) {
+      element.textContent = "";
+      let index = 0;
+      clearInterval(typingInterval2);
+      typingInterval2 = setInterval(() => {
+        element.textContent += text.charAt(index);
+        index++;
+        if (index === text.length) {
+          clearInterval(typingInterval2);
+          if (callback) callback();
+        }
+      }, 70); 
+    }
+
+    function showScreen2(index) {
+      const screen = screens2[index];
+      
+      mainBackground.className = screen.backgroundClass; 
+      
+      // Aplicar clases de color
+      title2.className = screen.titleColorClass ? `${screen.titleColorClass}` : '';
+      message2.className = screen.messageColorClass ? `${screen.messageColorClass}` : '';
+      
+      content2.classList.remove("fade-in");
+      content2.classList.add("fade-out");
+
+      setTimeout(() => {
+        title2.textContent = screen.title;
+        typeText2(screen.text, message2);
+        content2.classList.remove("fade-out");
+        content2.classList.add("fade-in");
+      }, 800);
+    }
+
+    button2.addEventListener("click", () => {
+      currentScreen2++;
+      if (currentScreen2 < screens2.length) {
+        showScreen2(currentScreen2);
+      } else {
+        // Pantalla final
+        mainBackground.className = "bg-stars"; 
+        content2.classList.add("fade-out");
+        setTimeout(() => {
+          title2.textContent = "¡Regresa al menú para seguir explorando! 🗺️";
+          title2.className = "pink-vibes-text"; 
+          message2.textContent = "";
+          message2.className = ""; 
+          button2.style.display = "none";
+          
+          let backButton = document.getElementById('final-back-button-2');
+          if (!backButton) {
+              backButton = document.createElement('a');
+              backButton.href = "menu.html";
+              backButton.textContent = "Volver al Menú Principal 🚀";
+              backButton.id = "final-back-button-2";
+              backButton.classList.add("back-to-menu-button"); 
+              content2.appendChild(backButton);
+          }
+
+          content2.classList.remove("fade-out");
+          content2.classList.add("fade-in");
+        }, 1000);
+      }
+    });
+    
+    // Iniciar la música y la primera pantalla
+    const bgMusic = document.getElementById("bgMusic");
+    bgMusic.play().catch(() => {});
+    showScreen2(0);
+  </script>
+</body>
+</html>
