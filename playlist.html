@@ -6,61 +6,127 @@
     <title>Playlist que Me Recuerda a Ti 🎶</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        /* Base de la tarjeta de contenido */
         .playlist-container {
             text-align: center;
-            max-width: 900px;
-            padding: 40px;
-            /* Usamos un fondo CLARO para mejor legibilidad de las tarjetas de música */
-            background-color: rgba(255, 255, 255, 0.9);
+            max-width: 1200px; 
+            width: 95%;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.95); 
             border-radius: 20px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-            color: #333; /* Texto oscuro */
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            color: #333; 
             
-            /* Ajuste para centrar el botón de regreso */
+            max-height: 90vh; /* Permite scroll vertical en toda la caja principal */
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            position: relative; 
         }
+
         .playlist-container h1 {
-            color: #ff4b5c; /* Rosa de tu tema (Ahora visible sobre blanco) */
-            text-shadow: 0 0 5px rgba(255, 75, 92, 0.5); /* Sombra para el título */
-            margin-bottom: 25px;
-            font-size: 3.5rem; /* Asegurar tamaño grande */
+            color: #ff4b5c; 
+            text-shadow: none;
+            margin-bottom: 5px;
+            font-size: 3rem;
+            width: 100%;
         }
         .playlist-container p {
             color: #555;
-            font-size: 1.1rem;
-            margin-bottom: 30px;
+            font-size: 1rem;
+            margin-bottom: 20px;
             font-weight: 600;
         }
-        
-        /* --- MODIFICACIÓN CLAVE: GRID RESPONSIVO --- */
-        #playlist-grid {
-            width: 100%; 
-            display: grid;
-            /* Permite que los videos sean más pequeños en móviles (mínimo 280px) */
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+
+        /* --- CONTENEDOR PRINCIPAL (ESTILO YOUTUBE) --- */
+        #main-content {
+            display: flex;
             gap: 20px;
-            margin-top: 20px;
-        }
-        
-        .embed-card {
-            background-color: #fff;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* --- MODIFICACIÓN CLAVE: MANTENER ASPECT RATIO 16:9 --- */
-        .video-responsive {
-            position: relative;
-            padding-bottom: 56.25%; /* (9 / 16) * 100 = 56.25% (Proporción 16:9) */
-            height: 0;
-            overflow: hidden;
+            width: 100%;
+            margin-top: 15px;
+            align-items: flex-start; 
         }
 
-        .embed-card iframe {
-            /* Ocupa el 100% del contenedor responsive */
+        /* Área del Reproductor Principal (el video grande y fijo) */
+        #player-area {
+            flex: 2; 
+            min-width: 60%;
+            padding-bottom: 10px;
+            position: sticky; 
+            top: 20px;
+            
+            /* Contenedor del reproductor y las frases */
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Espacio entre el video, las frases y el botón de menú */
+        }
+        
+        /* Contenedor de la Lista de Miniaturas (AJUSTE DE TAMAÑO - CUADRO ROJO) */
+        #thumbnail-list-wrapper {
+            flex: 1; 
+            min-width: 300px;
+            /* Altura fija para el scroll interno */
+            height: 400px; 
+            overflow-y: scroll; /* Forzar scroll vertical solo en esta caja */
+            padding-right: 10px; 
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        
+        #thumbnail-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Miniatura Individual (Tarjeta) */
+        .thumbnail-card {
+            background-color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 5px;
+            border: 2px solid transparent;
+        }
+        .thumbnail-card:hover {
+            background-color: #e0e0e0;
+        }
+        .thumbnail-card.active {
+            border-color: #ff4b5c; 
+            background-color: #ffe8e8;
+        }
+
+        .thumbnail-card img {
+            width: 100px; 
+            height: auto;
+            border-radius: 4px;
+        }
+        
+        .thumbnail-info {
+            text-align: left;
+            flex-grow: 1;
+            padding: 0;
+            margin: 0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        /* Aspect Ratio para el reproductor principal (16:9) */
+        .video-responsive {
+            position: relative;
+            padding-bottom: 56.25%; 
+            height: 0;
+            overflow: hidden;
+            background: #000;
+            border-radius: 8px;
+        }
+
+        .video-responsive iframe {
             position: absolute;
             top: 0;
             left: 0;
@@ -68,43 +134,161 @@
             height: 100%;
             border: none;
         }
-        /* ---------------------------------------------------- */
+        
+        /* --- CAJA DE FRASES ALEATORIAS (CUADRO NARANJA ANTERIOR) --- */
+        #phrase-area {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #fff7e6, #ffe0b2);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            color: #d6336c; 
+            font-size: 1.1rem;
+            font-style: italic;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* --- POSICIÓN DEL BOTÓN DE REGRESO (NUEVA POSICIÓN) --- */
+        #menu-button-container {
+            width: 100%;
+            padding-top: 5px;
+            text-align: left; 
+        }
+        .back-to-menu-button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            margin-top: 0; /* Anula el margin-top del estilo global */
+        }
+        
+        /* MÓVILES */
+        @media (max-width: 800px) {
+            #main-content {
+                flex-direction: column;
+                gap: 10px;
+            }
+            #player-area, #thumbnail-list-wrapper {
+                min-width: 100%;
+                max-height: none; 
+                position: relative;
+                top: 0;
+            }
+            #thumbnail-list-wrapper {
+                height: 35vh; 
+                order: 2; 
+            }
+            #player-area {
+                order: 1;
+            }
+            #menu-button-container {
+                text-align: center;
+                order: 3; /* Asegura que el botón va después del reproductor y la lista */
+            }
+        }
     </style>
 </head>
 <body>
+    
     <div id="main-background-image" class="bg-floral"></div> 
     <div id="background"></div>
     <div id="particles"></div>
 
-    <div class="container playlist-container dark-text">
+    <div class="container playlist-container">
         <h1>Canciones que Me Hacen Pensar en Ti ❤️</h1>
-        <p>Esta playlist se actualiza automáticamente desde mi celular. ¡Disfruta la música!</p>
+        <p>Selecciona un video de la lista lateral para reproducir. (Si ves Error 153, el video tiene restricciones de embedding.)</p>
         
-        <div id="playlist-grid">
-            <p style="color: #666;">Cargando playlist...</p>
-        </div>
+        
+        <div id="main-content">
+            
+            <div id="player-area">
+                <div class="video-responsive">
+                    <iframe 
+                        id="main-player" 
+                        src="" 
+                        frameborder="0"
+                        allowtransparency="true"
+                        allow="autoplay; encrypted-media; fullscreen"
+                    ></iframe>
+                </div>
+                
+                <div id="phrase-area">
+                    Cargando frases...
+                </div>
 
-        <a href="menu.html" class="back-to-menu-button">Volver al Menú Principal 🚀</a>
+                <div id="menu-button-container">
+                    <a href="menu.html" class="back-to-menu-button">Volver al Menú Principal 🚀</a>
+                </div>
+            </div>
+
+            <div id="thumbnail-list-wrapper">
+                <div id="thumbnail-list">
+                    <p style="color: #666; width: 100%;">Cargando playlist...</p>
+                </div>
+            </div>
+            
+        </div>
+        
+        <audio id="bgMusic" src="musica0.mp3" loop autoplay></audio>
     </div>
 
-    <audio id="bgMusic" src="musica0.mp3" loop autoplay></audio>
     <script>
+        // Lista de frases aleatorias (¡REEMPLAZA ESTO CON TUS FRASES DE CANCIONES!)
+        const PHRASES = [
+            "⭐ Solo mírame a los ojos para que veas que de verdad te quiero. ⭐",
+            "🎶 No hay nada que me guste más, que todo lo que me das. 🎶",
+            "💖 Y aunque nos duela el invierno, me quedo por siempre contigo. 💖",
+            "🌈 Quiero que sepas que me tienes, que todo lo que soy te pertenece. 🌈",
+            "🌞 Te espero con el alma, con el corazón, y con la vida entera. 🌞",
+            "🌟 Hay una luz, no puedo negar que me gusta la forma en la que eres. 🌟",
+        ];
+
         const bgMusic = document.getElementById("bgMusic");
         bgMusic.play().catch(() => {});
         
-        // URL de la API de la Playlist (VERIFICADA)
         const API_PLAYLIST_URL = 'https://script.google.com/macros/s/AKfycby8drTc25-SyB7T8ur8V8XonrmmgDay6IM9LO6U4Fx1CjfzAb_6zVMXEA305uDHh0jRpw/exec'; 
         
-        const playlistGrid = document.getElementById('playlist-grid');
+        const mainPlayer = document.getElementById('main-player');
+        const thumbnailList = document.getElementById('thumbnail-list');
+        const phraseArea = document.getElementById('phrase-area');
 
-        // Función para convertir URLs comunes de YouTube/Spotify en formato embed (iframe)
-        function getEmbedUrl(url) {
+        // --- LÓGICA DE FRASES ALEATORIAS ---
+        function displayRandomPhrase() {
+            const randomIndex = Math.floor(Math.random() * PHRASES.length);
+            phraseArea.textContent = PHRASES[randomIndex];
+        }
+        // Mostrar frase inicial y cambiarla cada 8 segundos
+        displayRandomPhrase();
+        setInterval(displayRandomPhrase, 8000);
+
+
+        // --- LÓGICA DE PLAYLIST Y EMBEDDING ---
+        
+        function getTitleFromLink(link) {
+            try {
+                const ytMatch = link.match(/(?:v=|youtu\.be\/)([^&?#]+)/i);
+                if (ytMatch && ytMatch[1]) {
+                    return `Video ID: ${ytMatch[1]}`; 
+                }
+                return 'Video de YouTube';
+            } catch (e) {
+                return 'Video de YouTube';
+            }
+        }
+        
+        function getEmbedUrl(url, autoplay = false) {
             if (!url) return null;
             
-            // Expresión regular robusta para obtener el ID de YouTube
             const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?#]+)/i);
             if (ytMatch && ytMatch[1]) {
-                return `https://www.youtube.com/embed/${ytMatch[1]}?controls=1&showinfo=0&rel=0`;
+                const auto = autoplay ? '1' : '0';
+                const thumbnailId = ytMatch[1];
+                
+                const embedLink = `https://www.youtube.com/embed/${thumbnailId}?controls=1&showinfo=0&rel=0&autoplay=${auto}`;
+                const thumbnailUrl = `https://img.youtube.com/vi/${thumbnailId}/hqdefault.jpg`;
+                
+                return { embedLink, thumbnailUrl, isYoutube: true, id: thumbnailId, title: getTitleFromLink(url) };
             }
             
             // Lógica para Spotify
@@ -113,64 +297,96 @@
                 const parts = spMatch[1].split('/');
                 const type = parts[1];
                 const id = parts[2];
-                // Formato embed URI de Spotify
-                return `https://open.spotify.com/embed/track/ID1{type}:${id}`;
+                return { embedLink: `https://open.spotify.com/embed/track/ID2{type}:${id}`, isSpotify: true, id: id, title: 'Contenido de Spotify' };
             }
 
-            return url;
+            return null;
+        }
+
+        function playVideo(embedLink, linkInfo, thumbnailElement) {
+            Array.from(thumbnailList.children).forEach(child => {
+                if (child.classList && child.classList.contains('thumbnail-card')) {
+                    child.classList.remove('active');
+                }
+            });
+
+            if (thumbnailElement) {
+                thumbnailElement.classList.add('active');
+            }
+            
+            let finalEmbedLink = embedLink;
+            if (linkInfo.isYoutube && !finalEmbedLink.includes('autoplay=1')) {
+                finalEmbedLink += '&autoplay=1';
+            }
+
+            mainPlayer.src = finalEmbedLink; 
+            
+            bgMusic.pause();
         }
 
         async function fetchPlaylist() {
-            playlistGrid.innerHTML = '<p style="color: #666;">Cargando playlist...</p>';
+            thumbnailList.innerHTML = '<p style="color: #666; width: 100%;">Cargando playlist...</p>';
             
             try {
                 const response = await fetch(API_PLAYLIST_URL);
                 
-                if (!response.ok) {
-                    if (response.status === 403) {
-                         throw new Error(`Error 403: Acceso denegado. Verifica los permisos del Apps Script ("Cualquiera").`);
-                    }
-                    throw new Error(`Error HTTP! estado: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`Error HTTP! estado: ${response.status}`);
                 
                 const links = await response.json();
-                
-                playlistGrid.innerHTML = '';
+                thumbnailList.innerHTML = '';
                 
                 const validLinks = links.filter(link => link && link.trim());
-
                 if (validLinks.length === 0) {
-                    playlistGrid.innerHTML = '<p style="color: #999;">Aún no hay canciones en la playlist. ¡Añade algunas a la hoja de cálculo!</p>';
+                    thumbnailList.innerHTML = '<p style="color: #999; width: 100%;">Aún no hay canciones en la playlist.</p>';
                     return;
                 }
 
-                validLinks.forEach(link => {
-                    const embedUrl = getEmbedUrl(link.trim());
+                let firstVideoInfo = null;
+
+                validLinks.forEach((link, index) => {
+                    const info = getEmbedUrl(link.trim());
+                    if (!info) return;
+
+                    const card = document.createElement('div');
+                    card.className = 'thumbnail-card';
+                    card.setAttribute('data-link', info.embedLink); 
                     
-                    if (embedUrl) {
-                        const isSpotify = embedUrl.includes('https://open.spotify.com/embed/track/ID2');
-                        
-                        // Contenedor video-responsive para mantener el aspect ratio 16:9
-                        const embedCode = `
-                            <div class="embed-card">
-                                <div class="video-responsive">
-                                    <iframe 
-                                        src="${embedUrl}" 
-                                        frameborder="0"
-                                        allowtransparency="true"
-                                        allow="encrypted-media; fullscreen"
-                                    ></iframe>
-                                </div>
-                            </div>
+                    if (info.isYoutube) {
+                        card.innerHTML = `
+                            <img src="${info.thumbnailUrl}" alt="Miniatura de YouTube">
+                            <div class="thumbnail-info">${info.title}</div>
                         `;
-                        playlistGrid.insertAdjacentHTML('beforeend', embedCode);
+                    } else if (info.isSpotify) {
+                         card.innerHTML = `
+                            <div style="background: #1DB954; width: 100px; height: 56.25px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">
+                                <span style="color: white; font-size: 1.5rem;">🎧</span>
+                            </div>
+                            <div class="thumbnail-info">${info.title}</div>
+                        `;
+                    } else {
+                         return;
+                    }
+                    
+                    card.addEventListener('click', () => {
+                        playVideo(info.embedLink, info, card);
+                    });
+
+                    thumbnailList.appendChild(card);
+                    
+                    if (index === 0) {
+                        firstVideoInfo = { link: link.trim(), info: info, card: card };
                     }
                 });
+                
+                if (firstVideoInfo) {
+                    const initialLink = getEmbedUrl(firstVideoInfo.link, false).embedLink; 
+                    playVideo(initialLink, firstVideoInfo.info, firstVideoInfo.card);
+                }
 
             } catch (error) {
                 console.error("Error al cargar la playlist:", error);
-                playlistGrid.innerHTML = `<p style="color: red;">¡Error de Conexión! Detalle: ${error.message}. 
-                                        Verifica la URL, los permisos del Apps Script y que la columna A se llame LINK.</p>`;
+                phraseArea.textContent = "Error al cargar la lista. Verifica tu conexión y la URL de la API.";
+                thumbnailList.innerHTML = `<p style="color: red; width: 100%;">¡Error de Conexión! ${error.message}</p>`;
             }
         }
 
