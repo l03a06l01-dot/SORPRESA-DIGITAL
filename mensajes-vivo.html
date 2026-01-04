@@ -3,87 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mensajes en Tiempo Real 📱</title>
+    <title>Mensajes Estelares ❤️</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .message-box {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 20px;
-            max-height: 400px;
-            overflow-y: auto;
-            margin-top: 20px;
-            text-align: left;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        body {
+            overflow-y: auto !important; 
+            height: auto;
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: block; 
         }
-        .message-box p {
+
+        .messages-page-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .messages-page-title h1 {
+            color: #ff4b5c;
+            font-size: 3rem;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        #messages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto 50px auto;
+        }
+
+        /* --- ESTILO DE LA TARJETA EXPANDIBLE --- */
+        .message-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-left: 6px solid #ff4b5c;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            
+            /* Estado inicial: cerrado */
+            max-height: 80px; 
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        /* Título del mensaje (siempre visible) */
+        .message-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ff4b5c;
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .message-title::after {
+            content: '▼'; /* Flecha indicadora */
+            font-size: 0.8rem;
+            transition: transform 0.5s;
+        }
+
+        /* Texto del mensaje (oculto inicialmente) */
+        .message-text {
+            color: #333;
             font-size: 1.1rem;
             line-height: 1.6;
-            padding: 8px 0;
-            border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
-            margin-bottom: 0;
-            color: #F0F8FF !important; 
-            font-weight: 400;
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
-        .message-box p:last-child {
-            border-bottom: none;
+
+        .message-date {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 15px;
+            text-align: right;
+            display: block;
         }
+
+        /* --- EFECTO HOVER (CUANDO PASAS EL MOUSE) --- */
+        .message-card:hover {
+            max-height: 1000px; /* Se expande para mostrar todo */
+            box-shadow: 0 15px 30px rgba(255, 75, 92, 0.3);
+            background: #ffffff;
+            transform: translateY(-5px);
+        }
+
+        .message-card:hover .message-title::after {
+            transform: rotate(180deg); /* La flecha gira */
+        }
+
+        .message-card:hover .message-text {
+            opacity: 1; /* El texto aparece suavemente */
+        }
+
+        .footer-nav { text-align: center; padding-bottom: 40px; }
     </style>
 </head>
 <body>
-    <div id="main-background-image" class="bg-space"></div>
+    <div id="main-background-image" class="bg-floral"></div> 
     <div id="background"></div>
     <div id="particles"></div>
 
-    <div class="container">
-        <h1>Buzón de Mensajes ✨</h1>
-        <p>¡Aquí aparecerán los mensajes que te envíe! Actualiza la página si no ves el más reciente.</p>
-        
-        <div id="messages-container" class="message-box">
-            <p>Cargando mensajes...</p>
-        </div>
+    <div class="messages-page-title">
+        <h1>Mensajes para Ti ❤️</h1>
+        <p style="color: white; font-weight: 600; text-shadow: 1px 1px 2px black;">Pasa el mouse sobre un mensaje para expandirlo.</p>
+    </div>
+    
+    <div id="messages-grid">
+        <p style="color: white; text-align: center; grid-column: 1/-1;">Sincronizando mensajes...</p>
+    </div>
 
+    <div class="footer-nav">
         <a href="menu.html" class="back-to-menu-button">Volver al Menú Principal 🚀</a>
     </div>
 
-    <audio id="bgMusic" src="musica.mp3" loop autoplay></audio>
     <script>
-        const bgMusic = document.getElementById("bgMusic");
-        bgMusic.play().catch(() => {});
-
-        // ⚠️ REEMPLAZA ESTA URL con la URL de tu Google Apps Script obtenida en el Paso 1.
-        const API_URL = 'https://script.google.com/macros/s/AKfycbya7Y58SKRfAY3xd_nqQBbkayMlK_kVTRWvlMhw1CK_EQ79CeVcezw-T6m6gbrzGNn_/exec'; 
-        
-        const messagesContainer = document.getElementById('messages-container');
+        const API_URL = 'https://script.google.com/macros/s/AKfycby2z5snwfrRisjRNO_pir-P_kLkecSnQ2upj4OrEblSd2XW95HSXT12i_kZq_QdaMSc/exec'; 
 
         async function fetchMessages() {
+            const grid = document.getElementById('messages-grid');
             try {
                 const response = await fetch(API_URL);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const messages = await response.json();
-                
-                messagesContainer.innerHTML = '';
-                
-                if (messages.length === 0) {
-                    messagesContainer.innerHTML = '<p>Aún no hay mensajes. ¡Escribe el primero en tu hoja de cálculo!</p>';
+                const data = await response.json();
+                grid.innerHTML = '';
+
+                if (data.length === 0) {
+                    grid.innerHTML = '<p style="color: white; text-align: center; grid-column: 1/-1;">No hay mensajes aún.</p>';
                     return;
                 }
 
-                messages.reverse().forEach(msg => {
-                    const p = document.createElement('p');
-                    p.textContent = msg;
-                    messagesContainer.appendChild(p);
-                });
+                // Invertimos para que el último mensaje de Excel sea el "Mensaje 1"
+                data.reverse().forEach((msg, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'message-card';
 
-            } catch (error) {
-                console.error("Error al obtener los mensajes:", error);
-                messagesContainer.innerHTML = '<p style="color: red;">Error al cargar los mensajes. Asegúrate de que la API URL es correcta y está pública.</p>';
+                    let fechaLabel = "Recién llegado ✨";
+                    if (msg.infoAdicional && msg.infoAdicional.trim() !== "") {
+                        const d = new Date(msg.infoAdicional);
+                        fechaLabel = isNaN(d.getTime()) ? msg.infoAdicional : d.toLocaleDateString();
+                    }
+
+                    // Aquí creamos la estructura: Título (Mensaje X) + Contenido
+                    card.innerHTML = `
+                        <div class="message-title">Mensaje ${index + 1}</div>
+                        <div class="message-text">${msg.contenido}</div>
+                        <span class="message-date">${fechaLabel}</span>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (e) {
+                grid.innerHTML = '<p style="color: white;">Error al conectar con el servidor.</p>';
             }
         }
 
         fetchMessages();
+        setInterval(fetchMessages, 60000);
     </script>
 </body>
 </html>
