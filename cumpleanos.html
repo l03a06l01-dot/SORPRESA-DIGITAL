@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Felices 21, Mi Vida ❤️</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #fce4ec;
+        }
+
+        .birthday-container {
+            text-align: center;
+            max-width: 800px;
+            width: 90%;
+            padding: 50px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            box-shadow: 0 15px 50px rgba(255, 75, 92, 0.2);
+            z-index: 10;
+            transition: all 1s ease;
+        }
+
+        h1 {
+            font-family: 'Great Vibes', cursive;
+            font-size: 4.5rem;
+            color: #ff4b5c;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        #message-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.6rem;
+            line-height: 1.8;
+            color: #1a1a1a;
+            min-height: 150px;
+            margin-bottom: 40px;
+            font-weight: 500;
+        }
+
+        #next-btn {
+            background: #ff4b5c;
+            border: none;
+            color: white;
+            padding: 18px 45px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 75, 92, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .final-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #ff4b5c;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1.5s ease;
+        }
+
+        .final-screen.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .final-text {
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 5rem;
+            font-weight: 900;
+            text-align: center;
+            text-transform: uppercase;
+            animation: heartBeat 1.5s infinite;
+            padding: 20px;
+            letter-spacing: -2px;
+            line-height: 1;
+        }
+
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            z-index: 101;
+            animation: fall 4s linear forwards;
+        }
+
+        @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+    </style>
+</head>
+<body>
+    <div id="main-background-image" class="bg-floral"></div> 
+    <div id="background"></div>
+
+    <div class="birthday-container" id="main-box">
+        <h1 id="main-title">Feliz Cumpleaños 🎂</h1>
+        <p id="message-text"></p>
+        <button id="next-btn" onclick="startExperience()">Toca mi corazón ❤️</button>
+    </div>
+
+    <div id="final-overlay" class="final-screen">
+        <div class="final-text">¡FELIZ 21 AÑOS <br>MIS OJITOS BONITOS! 😍</div>
+        <a href="menu.html" class="back-to-menu-button" style="background: white; color: #ff4b5c; margin-top: 50px; font-family: 'Montserrat', sans-serif;">Volver al Inicio 🚀</a>
+    </div>
+
+    <audio id="bdayMusic" src="cumple.mp3" loop></audio>
+
+    <script>
+        const messages = [
+            "A veces el universo nos regala personas que brillan más que las estrellas... ✨🌌",
+            "Y hoy, hace 21 años, el mundo recibió a su luz más hermosa: Tú. 💖🌸",
+            "Deseo que este año tu sonrisa nunca se apague y que la vida te devuelva toda la magia que tú nos das. 🌈🎈",
+            "Eres el sueño del que nunca quiero despertar, la melodía que siempre quiero escuchar... 🎵💤",
+            "Gracias por existir, por ser tú, por llenar cada rincón de mi vida con tu luz. 🧸💎",
+            "Prepárate... porque mi corazón grita por ti... 💓🔥"
+        ];
+
+        let currentMsgIndex = 0;
+        let musicStarted = false;
+        const messageElement = document.getElementById("message-text");
+        const nextBtn = document.getElementById("next-btn");
+        const finalOverlay = document.getElementById("final-overlay");
+        const mainBox = document.getElementById("main-box");
+        const bdayMusic = document.getElementById("bdayMusic");
+
+        function startExperience() {
+            // Iniciar música en el primer clic
+            if (!musicStarted) {
+                bdayMusic.play().catch(e => console.log("Error al reproducir:", e));
+                musicStarted = true;
+            }
+            nextMessage();
+        }
+
+        function typeWriter(text, i, fnCallback) {
+            if (i < text.length) {
+                messageElement.innerHTML = text.substring(0, i + 1) + '<span style="color: #ff4b5c">|</span>';
+                setTimeout(() => typeWriter(text, i + 1, fnCallback), 45);
+            } else if (typeof fnCallback == 'function') {
+                setTimeout(fnCallback, 800);
+            }
+        }
+
+        function nextMessage() {
+            if (currentMsgIndex < messages.length) {
+                nextBtn.disabled = true;
+                nextBtn.style.opacity = "0.5";
+                
+                typeWriter(messages[currentMsgIndex], 0, function() {
+                    currentMsgIndex++;
+                    if (currentMsgIndex < messages.length) {
+                        nextBtn.disabled = false;
+                        nextBtn.style.opacity = "1";
+                        nextBtn.innerText = "Dime más... 💌";
+                        // Cambiar la función del botón después del primer clic
+                        nextBtn.onclick = nextMessage; 
+                    } else {
+                        nextBtn.innerText = "¡MIRA AQUÍ! 🎁";
+                        nextBtn.disabled = false;
+                        nextBtn.style.opacity = "1";
+                        nextBtn.onclick = showFinalScreen;
+                    }
+                });
+            }
+        }
+
+        function showFinalScreen() {
+            mainBox.style.opacity = "0";
+            setTimeout(() => {
+                finalOverlay.classList.add("active");
+                lanzarConfeti();
+            }, 500);
+        }
+
+        function lanzarConfeti() {
+            const colores = ['#ffffff', '#ffeb3b', '#ff80ab', '#fff9c4', '#ff4b5c'];
+            for(let i=0; i<150; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-20px';
+                confetti.style.backgroundColor = colores[Math.floor(Math.random() * colores.length)];
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                confetti.style.borderRadius = "2px";
+                document.body.appendChild(confetti);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -36,11 +36,63 @@
                 🎧 Playlist Dinámica
             </a>
             
-            <a href="proximo-regalo.html" id="next-gift-button" class="button-link menu-button">
-                🎁 Próximo Regalo
-            </a>
+            <div id="btn-cumple-container" style="width: 100%; display: flex; justify-content: center;">
+                <a href="#" class="button-link menu-button" style="background: #bdc3c7; cursor: not-allowed; opacity: 0.8;">
+                    🎁 Próximo Regalo (Cargando...)
+                </a>
+            </div>
         </div>
     </div>
-    
-    </body>
+
+    <script>
+        function verificarFecha() {
+            const ahora = new Date();
+            // Configurado para el 11 de Enero de 2026 a las 00:00:00
+            const fechaCumple = new Date(2026, 0, 11, 0, 0, 0); 
+            const container = document.getElementById('btn-cumple-container');
+
+            if (ahora >= fechaCumple) {
+                // Aparece el botón de CUMPLEAÑOS
+                container.innerHTML = `
+                    <a href="cumpleanos.html" class="button-link menu-button" 
+                       style="background: linear-gradient(135deg, #ff4b5c, #f39c12); color: white; animation: pulse 2s infinite; font-weight: bold; width: 100%;">
+                        🎂 SORPRESA DE CUMPLEAÑOS 🎉
+                    </a>
+                `;
+            } else {
+                // Mantiene el botón de Próximo Regalo bloqueado
+                container.innerHTML = `
+                    <a href="#" class="button-link menu-button" style="background: #95a5a6; cursor: not-allowed; opacity: 0.7; width: 100%;">
+                        🎁 Próximo Regalo (Disponible el 11 de Ene)
+                    </a>
+                `;
+            }
+        }
+
+        // Ejecutar al cargar la página
+        verificarFecha();
+    </script>
+
+    <style>
+        /* Estilos adicionales para el menú y animaciones */
+        .menu-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 75, 92, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 12px rgba(255, 75, 92, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 75, 92, 0); }
+        }
+
+        .menu-button {
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+        }
+    </style>
+</body>
 </html>
